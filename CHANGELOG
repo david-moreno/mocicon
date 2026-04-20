@@ -1,0 +1,14 @@
+2010 Changelog
+
+-- Fixed Syntax Error causing bug. (poplarch)
+-- Make Integration (Jake Dukam)
+-- Added Xterm + Mocp Launch item (MUTU)
+-- Reworked the Icon calls, now only does it once. (MUTU)
+-- Added notification support. Default IS notify-send, but you can redefine it in the source. variable is named notify (MUTU)
+-- GTK-STOCK-QUIT fix
+
+
+
+
+
+
