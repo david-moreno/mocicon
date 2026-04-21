@@ -82,8 +82,14 @@ static void setup() {
         gtk_widget_show_all(menu);
 };
 
-static gboolean execute_single_click(gpointer data) {
+static gboolean single_left_click(gpointer data) {
 	send(NULL, GINT_TO_POINTER( 1 ));
+	click_timer_id = 0;
+	return FALSE; //Stops the timeout
+}
+
+static gboolean single_right_click(gpointer data, GdkEventButton *ev) {
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, ev->button, ev->time);
 	click_timer_id = 0;
 	return FALSE; //Stops the timeout
 }
@@ -94,8 +100,24 @@ gboolean button_press_cb(GtkStatusIcon *icon, GdkEventButton *ev, gpointer user_
 	// Idk. needs work.
 	
 	if(ev->button == 3) {
-		// Popup the menu 
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, ev->button, ev->time); 
+
+		if (ev->type == GDK_BUTTON_PRESS) {
+
+			// Popup the menu 
+			click_timer_id = g_timeout_add(200, single_right_click, ev);
+
+		} else if (ev->type == GDK_2BUTTON_PRESS) {
+
+			// Double click detected, stopping single click timeout
+			if (click_timer_id > 0) {
+				g_source_remove(click_timer_id);
+				click_timer_id = 0;
+			}
+
+			send(NULL, GINT_TO_POINTER( 4 ));
+
+		}
+
 		return TRUE;
 	} 
 
@@ -105,20 +127,28 @@ gboolean button_press_cb(GtkStatusIcon *icon, GdkEventButton *ev, gpointer user_
 	}
     
 	if(ev->button == 1)  {
+
 		if (ev->type == GDK_BUTTON_PRESS) {
+
 			// Timeout starting
 			// IMPORTANT: The milliseconds *must* be lower than system's double click timeout,
 			// I used 200 against the typical 250-400 ms system default
-			click_timer_id = g_timeout_add(200, execute_single_click, NULL);
+			click_timer_id = g_timeout_add(200, single_left_click, NULL);
+
 		} else if (ev->type == GDK_2BUTTON_PRESS) {
+
 			// Double click detected, stopping single click timeout
 			if (click_timer_id > 0) {
 				g_source_remove(click_timer_id);
 				click_timer_id = 0;
 			}
+			
 			send(NULL, GINT_TO_POINTER( 3 ));
+
 		}
+
 		return TRUE;
+
 	}
 
 	return FALSE;

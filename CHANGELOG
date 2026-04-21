@@ -1,3 +1,8 @@
+2026 Changelog
+
+-- Previous song on right double click (David Moreno)
+-- Next song on double click (David Moreno)
+
 2010 Changelog
 
 -- Fixed Syntax Error causing bug. (poplarch)
@@ -6,9 +11,3 @@
 -- Reworked the Icon calls, now only does it once. (MUTU)
 -- Added notification support. Default IS notify-send, but you can redefine it in the source. variable is named notify (MUTU)
 -- GTK-STOCK-QUIT fix
-
-
-
-
-
-
